@@ -77,6 +77,36 @@
   const contacts = (noMail) => `<div class="contacts">${S.contacts.filter((c) => !(noMail && c.href.startsWith("mailto"))).map((c) =>
     `<a href="${esc(c.href)}" ${c.href.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>${esc(c.label)}</a>`).join("")}</div>`;
 
+  // click a photo to see it big, in full quality (only on click); arrows/swipe go through the others on the page
+  const zoomable = (pics) => {
+    if (!pics.length) return;
+    {
+      const lb = document.createElement("div");
+      lb.className = "lightbox"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true"); lb.setAttribute("aria-label", "Photo viewer");
+      lb.innerHTML = `<div class="bar"><span class="count"></span><button class="lb-close">close</button></div><figure><img alt=""></figure>
+        <div class="arrows"><button data-d="-1" aria-label="Previous photo">\u2190</button><button data-d="1" aria-label="Next photo">\u2192</button></div>`;
+      document.body.appendChild(lb);
+      const big = lb.querySelector("img"), cnt = lb.querySelector(".count");
+      const full = (el) => (el.getAttribute("src") || "").replace(/-s\.webp$/, ".webp");
+      let at = 0, last = null;
+      const render = () => { big.src = full(pics[at]); big.alt = pics[at].alt; cnt.textContent = `${at + 1}/${pics.length}`; };
+      const open = (i) => { at = i; render(); lb.classList.add("open"); document.body.style.overflow = "hidden"; lb.querySelector(".lb-close").focus(); };
+      const close = () => { lb.classList.remove("open"); document.body.style.overflow = ""; last && last.focus(); };
+      const go = (d) => { at = (at + d + pics.length) % pics.length; render(); };
+      pics.forEach((el, i) => { el.classList.add("zoomable"); el.tabIndex = 0;
+        el.addEventListener("click", () => { last = el; open(i); });
+        el.addEventListener("keydown", (e) => { if (e.key === "Enter") { last = el; open(i); } }); });
+      lb.querySelector(".lb-close").onclick = close;
+      lb.querySelectorAll(".arrows button").forEach((b) => (b.onclick = () => go(+b.dataset.d)));
+      lb.addEventListener("click", (e) => { if (e.target === lb || e.target.tagName === "FIGURE") close(); });
+      document.addEventListener("keydown", (e) => { if (!lb.classList.contains("open")) return;
+        if (e.key === "Escape") close(); if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); });
+      let x0 = null;
+      lb.addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
+      lb.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1); x0 = null; });
+    }
+  };
+
   /* ---------- header, mobile menu, footer ---------- */
   const links = [["work.html", "work", "work"], ["photo.html", "photo & video", "photo"], ["visuals.html", "visuals", "visuals"], ["about.html", "about", "about"]];
   const navHtml = links.map(([href, label, id]) => `<a href="${href}" ${id === page ? 'aria-current="page"' : ""}>${label}</a>`).join("");
@@ -213,8 +243,8 @@
     };
     const hero = p.hero || p.cover;
     main.innerHTML = `
-      <header class="p-hero">
-        ${hero ? img(hero, p.title, "100vw", "p-hero-img", true).replace("<img ", `<img style="object-position:${p.heroPos || "50% 50%"}" `) : ""}
+      <header class="p-hero${p.heroFit === "contain" ? " contain" : ""}">
+        ${hero ? img(hero, p.title, p.heroFit === "contain" ? "60vw" : "100vw", "p-hero-img", true).replace("<img ", `<img style="object-position:${p.heroPos || "50% 50%"}" `) : ""}
         <div class="p-hero-text"><span class="kind">${esc(p.kind)}</span><h1 class="display dvd">${esc(p.title)}</h1></div>
       </header>
       ${p.intro ? `<section class="block p-intro"><p>${esc(p.intro)}</p></section>` : ""}
@@ -233,33 +263,7 @@
     const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add("lit"), io.unobserve(e.target))), { rootMargin: "0px 0px -30% 0px" });
     document.querySelectorAll(".frame").forEach((f) => io.observe(f));
 
-    // click any photo in the project to see it big, in full quality (only on click)
-    const pics = [...main.querySelectorAll(".block img")];
-    if (pics.length) {
-      const lb = document.createElement("div");
-      lb.className = "lightbox"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true"); lb.setAttribute("aria-label", "Photo viewer");
-      lb.innerHTML = `<div class="bar"><span class="count"></span><button class="lb-close">close</button></div><figure><img alt=""></figure>
-        <div class="arrows"><button data-d="-1" aria-label="Previous photo">\u2190</button><button data-d="1" aria-label="Next photo">\u2192</button></div>`;
-      document.body.appendChild(lb);
-      const big = lb.querySelector("img"), cnt = lb.querySelector(".count");
-      const full = (el) => (el.getAttribute("src") || "").replace(/-s\.webp$/, ".webp");
-      let at = 0, last = null;
-      const render = () => { big.src = full(pics[at]); big.alt = pics[at].alt; cnt.textContent = `${at + 1}/${pics.length}`; };
-      const open = (i) => { at = i; render(); lb.classList.add("open"); document.body.style.overflow = "hidden"; lb.querySelector(".lb-close").focus(); };
-      const close = () => { lb.classList.remove("open"); document.body.style.overflow = ""; last && last.focus(); };
-      const go = (d) => { at = (at + d + pics.length) % pics.length; render(); };
-      pics.forEach((el, i) => { el.classList.add("zoomable"); el.tabIndex = 0;
-        el.addEventListener("click", () => { last = el; open(i); });
-        el.addEventListener("keydown", (e) => { if (e.key === "Enter") { last = el; open(i); } }); });
-      lb.querySelector(".lb-close").onclick = close;
-      lb.querySelectorAll(".arrows button").forEach((b) => (b.onclick = () => go(+b.dataset.d)));
-      lb.addEventListener("click", (e) => { if (e.target === lb || e.target.tagName === "FIGURE") close(); });
-      document.addEventListener("keydown", (e) => { if (!lb.classList.contains("open")) return;
-        if (e.key === "Escape") close(); if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); });
-      let x0 = null;
-      lb.addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
-      lb.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1); x0 = null; });
-    }
+    zoomable([...main.querySelectorAll(".block img")]);
   }
 
   /* ---------- VISUALS ---------- */
@@ -279,6 +283,7 @@
       s.querySelectorAll(".strip-nav button").forEach((b) => (b.onclick = () =>
         strip.scrollBy({ left: +b.dataset.dir * strip.clientWidth * 0.7, behavior: reduce ? "auto" : "smooth" })));
     });
+    zoomable([...main.querySelectorAll(".visual img")]);
   }
 
   /* ---------- PHOTO & VIDEO ---------- */

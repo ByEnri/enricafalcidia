@@ -883,3 +883,18 @@ body.page-flash::before {
 }
 .block-full img { max-width: calc(100% - 2 * var(--gutter)); }
 .block-strip img { max-height: none; }
+
+/* hero that shows the whole (portrait) photo, feathered into the black, instead of a cropped zoom */
+.p-hero.contain .p-hero-img { left: auto; right: 6vw; width: auto; height: 100%; max-width: 70vw; object-fit: contain;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 18%, #000 85%, transparent), linear-gradient(180deg, #000 70%, transparent);
+  -webkit-mask-composite: source-in; mask: linear-gradient(90deg, transparent, #000 18%, #000 85%, transparent), linear-gradient(180deg, #000 70%, transparent);
+  mask-composite: intersect; }
+@media (max-width: 760px) { .p-hero.contain .p-hero-img { right: 0; left: 0; width: 100%; max-width: none; height: 100%; object-fit: cover; object-position: 50% 15%; -webkit-mask: none; mask: none; } }
+
+/* split blocks: the photo hugs the text instead of floating far from it */
+.block-split figure img { margin-left: auto; margin-right: 0; }
+.block-split.left figure img { margin-left: 0; margin-right: auto; }
+.block-split .prose { grid-column: 8 / span 4; }
+.block-split.left .prose { grid-column: 2 / span 4; padding-left: 0; }
+.block-split.left figure { grid-column: 6 / span 6; }
+@media (max-width: 860px) { .block-split .prose, .block-split.left .prose, .block-split.left figure { grid-column: 1; } .block-split figure img, .block-split.left figure img { margin-inline: auto; } }
