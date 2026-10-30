@@ -80,7 +80,6 @@ html, body { overflow-x: clip; }
   height: var(--header);
   display: flex; align-items: center; justify-content: space-between;
   padding: env(safe-area-inset-top, 0px) max(var(--gutter), env(safe-area-inset-right, 0px)) 0 max(var(--gutter), env(safe-area-inset-left, 0px));
-  mix-blend-mode: difference;
   color: #fff;
   transition: background-color .25s;
 }
@@ -920,4 +919,12 @@ body.page-flash::before {
     opacity: .85;
   }
   @keyframes litfade { 0%, 15% { opacity: 0; } 100% { opacity: .85; } }
+}
+
+/* phone: landscape project covers are shown whole (no heavy zoom), title underneath */
+@media (max-width: 760px) {
+  .p-hero.land { height: auto; min-height: 0; overflow: visible; padding-top: var(--header); margin-bottom: 48px; }
+  .p-hero.land .p-hero-img { position: static; width: 100%; height: auto; object-fit: contain; }
+  .p-hero.land .p-hero-text { position: static; padding: 18px var(--gutter) 0; }
+  .p-hero.land::after { display: none; }
 }

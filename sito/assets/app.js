@@ -255,7 +255,7 @@
     };
     const hero = p.hero || p.cover;
     main.innerHTML = `
-      <header class="p-hero${p.heroFit === "contain" ? " contain" : ""}">
+      <header class="p-hero${p.heroFit === "contain" ? " contain" : ""}${hero && (Z[hero] || [3, 2])[0] > (Z[hero] || [3, 2])[1] ? " land" : ""}">
         ${hero ? img(hero, p.title, p.heroFit === "contain" ? "60vw" : "100vw", "p-hero-img", true).replace("<img ", `<img style="object-position:${p.heroPos || "50% 50%"}" `).replace(p.heroXL ? /srcset="[^"]*"/ : /$^/, `srcset="img/${hero}-s.webp 800w, img/${hero}.webp 1600w, img/${hero}-xl.webp 2560w"`) : ""}
         <div class="p-hero-text"><span class="kind">${esc(p.kind)}</span><h1 class="display dvd">${esc(p.title)}</h1></div>
       </header>
