@@ -60,6 +60,16 @@ a, button, .cam-screen, .work-row, .jr-item, .masonry button, .print, .ed-item, 
 .prose p { margin: 0 0 1.1em; max-width: 60ch; }
 .prose p:last-child { margin-bottom: 0; }
 
+/* slim black scrollbar with a silver (DVD-like) thumb instead of the grey browser default */
+html { scrollbar-width: thin; scrollbar-color: #8d8e92 #000; }
+::-webkit-scrollbar { width: 7px; height: 7px; background: #000; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { border-radius: 7px; border: 1px solid #000;
+  background: linear-gradient(180deg, #f4f4f6, #a9abb1 35%, #e6e1f0 55%, #9a9ca2 80%, #d9dadd); }
+::-webkit-scrollbar-thumb:hover { background: #eceef2; }
+::-webkit-scrollbar-button { display: none; height: 0; width: 0; }
+::-webkit-scrollbar-corner { background: #000; }
+
 /* never allow sideways scrolling on any device (clip keeps sticky elements working) */
 html, body { overflow-x: clip; }
 
