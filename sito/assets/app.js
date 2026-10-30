@@ -926,6 +926,16 @@
   }
   const onScroll = () => document.body.classList.toggle("scrolled", scrollY > 8);
   addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  // email links: many computers have no mail app set up, so clicking "Email" seemed to do nothing.
+  // Now the address is also copied and a small note says so; phones still open their mail app.
+  const note = document.createElement("div"); note.className = "mail-note"; note.setAttribute("role", "status"); document.body.appendChild(note);
+  let noteT;
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href^="mailto:"]'); if (!a) return;
+    const addr = a.getAttribute("href").slice(7);
+    const done = () => { note.innerHTML = `Email copied <b>${esc(addr)}</b>`; note.classList.add("on"); clearTimeout(noteT); noteT = setTimeout(() => note.classList.remove("on"), 3200); };
+    try { navigator.clipboard.writeText(addr).then(done, done); } catch { done(); }
+  });
   toTop();
   window.addEventListener("load", toTop);
   window.addEventListener("pageshow", toTop);

@@ -944,3 +944,10 @@ body.page-flash::before {
 @media (max-width: 860px) { .fit .block-split figure img, .fit .block-split.left figure img { margin-inline: auto; } }
 /* phone home: the light is there straight away (no full reveal of the photo first) */
 @media (max-width: 760px) { .hero-torch.lit .torch-dark { animation: none; } }
+
+.mail-note { position: fixed; z-index: 400; left: 50%; bottom: 28px; transform: translate(-50%, 12px); max-width: calc(100vw - 32px);
+  padding: 12px 18px; border-radius: 999px; font-size: 14px; color: #111; text-align: center;
+  background: #c9cacd url("../img/dvd.webp") 30% 50% / 300% auto; box-shadow: 0 10px 30px rgba(0,0,0,.6);
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+.mail-note.on { opacity: 1; transform: translate(-50%, 0); }
+.mail-note b { font-weight: 700; margin-left: 6px; }
