@@ -41,7 +41,7 @@ window.SITE = {
       title: "Badbling",
       kind: "Individual brand concept",
       cover: "badbling/poster-1",
-      hero: "badbling/poster-3-clean", heroPos: "50% 22%", heroXL: true,
+      hero: "badbling/poster-3-clean", heroPos: "50% 22%", heroXL: true, big: true,
       intro: "Bad Bling is a branding concept and photo campaign for an imaginary jewelry brand I developed with an alternative edge.",
       blocks: [
         { type: "split", img: "badbling/poster-1", text: [
@@ -114,7 +114,7 @@ window.SITE = {
         { type: "text", text: [
           "Ultimately, the work reflects on how what we perceive as safe and beautiful is not always beneficial, but can quietly hold us back.",
         ]},
-        { type: "full", img: "silk/final" },
+        { type: "full", img: "silk/final", big: true },
       ],
     },
   ],

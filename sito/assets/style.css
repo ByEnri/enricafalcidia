@@ -645,7 +645,9 @@ body.is-home { overflow: hidden; height: 100vh; height: 100svh; }
 .lightbox .bar { display: flex; justify-content: space-between; padding: 18px var(--gutter); font-size: 15px; }
 .lightbox .bar span { color: var(--grey); font-variant-numeric: tabular-nums; }
 .lightbox figure { margin: 0; display: grid; place-items: center; min-height: 0; padding: 0 var(--gutter); }
-.lightbox figure img { max-height: 100%; max-width: 100%; width: auto; object-fit: contain; }
+.lightbox figure { overflow: hidden; }
+.lightbox figure img { width: auto; height: auto; max-width: 100%; object-fit: contain;
+  max-height: calc(100vh - 150px); max-height: calc(100dvh - 150px); }
 .lightbox .arrows { display: flex; justify-content: space-between; padding: 14px var(--gutter) 22px; }
 .lightbox .arrows button { font-size: 26px; padding: 6px 10px; }
 img.zoomable { cursor: var(--cur), zoom-in; }
@@ -928,3 +930,17 @@ body.page-flash::before {
   .p-hero.land .p-hero-text { position: static; padding: 18px var(--gutter) 0; }
   .p-hero.land::after { display: none; }
 }
+
+/* every photo fits the screen (projects marked big, like Badbling, and single 'big' photos keep the large size) */
+.fit .block figure img, .fit .block-full:not(.big) img, .visual > img {
+  display: block; width: auto; height: auto; max-width: 100%;
+  max-height: calc(100vh - var(--header) - 48px); max-height: calc(100svh - var(--header) - 48px);
+  margin-inline: auto; object-fit: contain;
+}
+.fit .block-full:not(.big) img { max-width: calc(100% - 2 * var(--gutter)); }
+.fit .block-split figure img { margin-left: auto; margin-right: 0; }
+.fit .block-split.left figure img { margin-left: 0; margin-right: auto; }
+.c-row { justify-content: center; }
+@media (max-width: 860px) { .fit .block-split figure img, .fit .block-split.left figure img { margin-inline: auto; } }
+/* phone home: the light is there straight away (no full reveal of the photo first) */
+@media (max-width: 760px) { .hero-torch.lit .torch-dark { animation: none; } }

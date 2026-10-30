@@ -184,7 +184,7 @@
       let tx = innerWidth * 0.5, ty = innerHeight * 0.45, x = tx, y = ty, moved = false;
       addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { tx = e.clientX; ty = e.clientY; moved = true; } }, { passive: true });
       const loop = (ts) => {
-        if (!moved) { if (coarse) { tx = innerWidth * (0.5 + 0.34 * Math.sin(ts / 1300)); ty = innerHeight * (0.6 + 0.14 * Math.sin(ts / 950)); } else { tx = innerWidth * (0.5 + 0.28 * Math.sin(ts / 2600)); ty = innerHeight * (0.48 + 0.2 * Math.sin(ts / 1900)); } }
+        if (!moved) { if (coarse) { tx = innerWidth * (0.5 + 0.36 * Math.sin(ts / 700)); ty = innerHeight * (0.6 + 0.15 * Math.sin(ts / 520)); } else { tx = innerWidth * (0.5 + 0.28 * Math.sin(ts / 2600)); ty = innerHeight * (0.48 + 0.2 * Math.sin(ts / 1900)); } }
         x += (tx - x) * 0.16; y += (ty - y) * 0.16;
         hero.style.setProperty("--mx", `${x}px`); hero.style.setProperty("--my", `${y}px`);
         requestAnimationFrame(loop);
@@ -240,7 +240,7 @@
       if (b.type === "pair") return `<section class="block block-pair ${b.side === "left" ? "left" : ""}"><figure>${img(b.img, p.title, "(max-width:860px) 100vw, 42vw")}</figure>${prose(b.text)}</section>`;
       if (b.type === "split") return `<section class="block block-split ${b.side === "left" ? "left" : ""}"><figure>${img(b.img, p.title, "(max-width:860px) 100vw, 55vw")}</figure>${prose(b.text)}</section>`;
       if (b.type === "quote") return `<section class="block block-quote"><p class="display dvd">${esc(b.text)}</p></section>`;
-      if (b.type === "full") return `<section class="block block-full">${img(b.img, p.title, "100vw")}</section>`;
+      if (b.type === "full") return `<section class="block block-full${b.big ? " big" : ""}">${img(b.img, p.title, "100vw")}</section>`;
       if (b.type === "columns") return `<section class="block block-columns">${b.text.map((t) => prose([t])).join("")}</section>`;
       if (b.type === "text") return `<section class="block block-text">${prose(b.text)}</section>`;
       if (b.type === "strip") return `<section class="block block-strip">
@@ -254,6 +254,7 @@
       return "";
     };
     const hero = p.hero || p.cover;
+    main.classList.toggle("fit", !p.big);
     main.innerHTML = `
       <header class="p-hero${p.heroFit === "contain" ? " contain" : ""}${hero && (Z[hero] || [3, 2])[0] > (Z[hero] || [3, 2])[1] ? " land" : ""}">
         ${hero ? img(hero, p.title, p.heroFit === "contain" ? "60vw" : "100vw", "p-hero-img", true).replace("<img ", `<img style="object-position:${p.heroPos || "50% 50%"}" `).replace(p.heroXL ? /srcset="[^"]*"/ : /$^/, `srcset="img/${hero}-s.webp 800w, img/${hero}.webp 1600w, img/${hero}-xl.webp 2560w"`) : ""}
@@ -404,7 +405,7 @@
       const W = row.clientWidth; if (!W) return;
       const gap = parseFloat(getComputedStyle(row).columnGap) || 12, kids = [...row.children];
       const ars = kids.map((el) => { const [w, h] = Z[el.dataset.k] || [3, 2]; return w / h; });
-      const h = (W - gap * (kids.length - 1)) / ars.reduce((a, b) => a + b, 0);
+      const h = Math.min(innerHeight - 110, (W - gap * (kids.length - 1)) / ars.reduce((a, b) => a + b, 0));
       kids.forEach((el, i) => { el.style.width = `${ars[i] * h}px`; el.style.height = `${h}px`; });
     });
     const ar = (el) => { const [w, h] = Z[el.dataset.k] || [3, 2]; return w / h; };
@@ -417,7 +418,7 @@
       const g = parseFloat(getComputedStyle(c).rowGap) || 12, narrow = W < 600;
       c.querySelectorAll(".c-row").forEach((row) => {
         const RW = row.classList.contains("narrow") && !narrow ? W * 0.66 : W;
-        const kids = [...row.children], h = (RW - g * (kids.length - 1)) / kids.reduce((s, el) => s + ar(el), 0);
+        const kids = [...row.children], h = Math.min(maxH(), (RW - g * (kids.length - 1)) / kids.reduce((s, el) => s + ar(el), 0));
         kids.forEach((el) => sz(el, ar(el) * h, h));
       });
       // bento block: every column ends at the same height, nothing cropped
@@ -654,7 +655,7 @@
       const shoot = () => {
         stopAuto();
         const fire = () => { document.body.classList.remove("page-flash"); void document.body.offsetWidth; if (!reduce && cfg.flash) document.body.classList.add("page-flash"); print(); show(1); };
-        if (!cfg.timer) return fire();
+        return fire();   // prints straight away, no countdown
         let n = cfg.timer; say(String(n));
         const tick = setInterval(() => { n--; if (n > 0) say(String(n)); else { clearInterval(tick); fire(); } }, 1000);
       };
@@ -674,7 +675,6 @@
           { label: "Games", sub: () => ({ title: "GAMES", items: [{ label: "The Shoot", value: `HI ${store.get("shoot", 0)}`, act: () => startGame() }] }) },
           { label: "Settings", sub: () => ({ title: "SETTINGS", items: [
             { label: "Flash", value: cfg.flash ? "ON" : "OFF", act: () => { cfg.flash = !cfg.flash; store.set("flash", cfg.flash); } },
-            { label: "Self-timer", value: cfg.timer ? `${cfg.timer}s` : "OFF", act: () => { cfg.timer = cfg.timer === 0 ? 3 : cfg.timer === 3 ? 10 : 0; store.set("timer", cfg.timer); } },
             { label: "Clear prints", act: () => { tray.innerHTML = ""; tray.classList.remove("has"); closeMenu(); say("CLEARED"); } },
           ] }) },
           { label: "Info", sub: () => ({ title: "INFO", items: [
