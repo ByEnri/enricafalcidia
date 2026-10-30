@@ -538,7 +538,7 @@
         <h1 class="about-title"><span class="display dvd hi">Hi, I'm Enrica.</span><span class="display neg-fill"${shots.length ? ` style="--neg:url(${new URL(`img/${shots[0]}-neg.webp`, document.baseURI).href});--pos:${(S.backstageFocus || {})[shots[0]] || "50% 50%"}"` : ""}>Concepts<br>into<br>visuals.</span></h1>
         <div class="about-text">
           <div class="prose">${S.about.map((t, i) => `<p${i === 0 ? ' class="lead"' : ""}>${esc(t)}</p>`).join("")}</div>
-          <div class="side"><p>Creative direction, branding, photography.<br>Working in English · Español · Italiano</p>${contacts()}</div>
+          <div class="side"><p>Creative direction, branding, photography.<br>Working in English · Español · Italiano</p></div>
         </div>
         ${shots.length ? `
         <figure class="digicam-wrap">
