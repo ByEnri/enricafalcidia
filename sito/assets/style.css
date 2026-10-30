@@ -874,3 +874,12 @@ body.page-flash::before {
   html { scroll-behavior: auto; }
   .js .frame img { filter: none; }
 }
+
+/* every photo in projects and visuals fits the screen: you never have to scroll to see one whole */
+.block figure img, .block-full img, .visual > img {
+  display: block; width: auto; height: auto; max-width: 100%;
+  max-height: calc(100vh - var(--header) - 48px); max-height: calc(100svh - var(--header) - 48px);
+  margin-inline: auto; object-fit: contain;
+}
+.block-full img { max-width: calc(100% - 2 * var(--gutter)); }
+.block-strip img { max-height: none; }
