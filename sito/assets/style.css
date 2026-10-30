@@ -142,8 +142,8 @@ body.scrolled .site-header { background: #000; mix-blend-mode: normal; box-shado
   100% { opacity: 0; filter: brightness(.2); }
 }
 .hero-name {
-  position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(var(--gutter) + 64px);
-  font-size: clamp(54px, 15.6vw, 290px);
+  position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(var(--gutter) + 84px);
+  font-size: clamp(50px, min(13.2vw, 23vh), 250px);
   mix-blend-mode: difference;
   color: #fff;
   pointer-events: none;
@@ -160,7 +160,7 @@ body.scrolled .site-header { background: #000; mix-blend-mode: normal; box-shado
 
 @media (max-width: 760px) {
   .flash-stage img { top: 40%; height: 56%; }
-  .hero-name { bottom: 120px; }
+  .hero-name { bottom: 150px; font-size: 14.6vw; }
   .hero-foot { flex-direction: column; align-items: flex-start; }
 }
 
