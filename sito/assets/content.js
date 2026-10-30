@@ -180,7 +180,7 @@ window.SITE = {
   ],
 
   /* Foto del backstage: si sfogliano nella fotocamera digitale dell'About */
-  backstage: ["backstage/bs01","backstage/bs22","backstage/bs12","backstage/bs04","backstage/bs10","backstage/bs14","backstage/bs23","backstage/bs24","backstage/bs02","backstage/bs08","backstage/bs09","backstage/bs25","backstage/bs07","backstage/bs17","backstage/bs18","backstage/bs26","backstage/bs16","backstage/bs06","backstage/bs13","backstage/bs19","backstage/bs21","backstage/bs15","backstage/bs11","backstage/bs05"],
+  backstage: ["backstage/bs02","backstage/bs08","backstage/bs09","backstage/bs25","backstage/bs07","backstage/bs01","backstage/bs22","backstage/bs12","backstage/bs04","backstage/bs10","backstage/bs14","backstage/bs23","backstage/bs24","backstage/bs17","backstage/bs18","backstage/bs26","backstage/bs16","backstage/bs06","backstage/bs13","backstage/bs19","backstage/bs21","backstage/bs15","backstage/bs11","backstage/bs05"],
 
   /* punto da tenere al centro quando la foto viene ritagliata nello schermo della fotocamera */
   backstageFocus: { "backstage/bs01": "50% 62%", "backstage/bs03": "50% 30%", "backstage/bs04": "55% 50%",
