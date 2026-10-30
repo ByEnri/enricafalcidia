@@ -26,7 +26,7 @@ window.SITE = {
   /* Le poche immagini che "lampeggiano" nella home, in quest'ordine */
   flash: [
     /* le foto della prima versione */
-    "badbling/poster-3", "silk/veiled", "punk/03", "travel/jp-window-1",
+    "badbling/poster-3-clean", "silk/veiled", "punk/03", "travel/jp-window-1",
   ],
   /* punto da tenere al centro quando la foto riempie tutto lo schermo */
   /* tutte le foto della home: intere, al centro, con i bordi che sfumano nel nero */
