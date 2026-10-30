@@ -151,7 +151,7 @@
         <div class="flash-stage full" aria-hidden="true">${S.flash.map((k, i) => {
           const [w, h] = Z[k] || [3000, 2000];
           return `<img src="img/${k}-xl.webp" srcset="img/${k}.webp 1800w, img/${k}-xl.webp ${w > 2800 ? 2800 : w}w" sizes="100vw"
-            alt="" width="${w}" height="${h}" ${i < 2 ? "" : 'loading="lazy"'} decoding="async">`; }).join("")}</div>
+            alt="" width="${w}" height="${h}" class="${w > h ? "land" : "port"}" ${i < 2 ? "" : 'loading="lazy"'} decoding="async">`; }).join("")}</div>
         <div class="torch-dark" aria-hidden="true"></div>
         <div class="flash-burst" aria-hidden="true"></div>
         <h1 class="display hero-name">Enrica<br>Falcidia</h1>
@@ -166,6 +166,7 @@
     const frames = [...document.querySelectorAll(".flash-stage img")];
     const hero = document.querySelector(".hero"), cap = document.querySelector(".hero-cap");
     const burst = document.querySelector(".flash-burst");
+    const coarse = matchMedia("(hover: none), (max-width: 760px)").matches;
     let i = 0;
     const show = () => {
       const n = i % frames.length;
@@ -176,14 +177,14 @@
       i++;
     };
     if (reduce) { frames[0].classList.add("on"); if (torch) hero.classList.add("still"); if (cap) cap.textContent = `01 — ${label(S.flash[0])}`; }
-    else { show(); setInterval(show, torch ? 4200 : 2300); }
+    else { show(); setInterval(show, torch ? (coarse ? 3200 : 4200) : 2300); }
 
     // the light follows the mouse; on touch screens it drifts on its own
     if (torch) {
       let tx = innerWidth * 0.5, ty = innerHeight * 0.45, x = tx, y = ty, moved = false;
       addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { tx = e.clientX; ty = e.clientY; moved = true; } }, { passive: true });
       const loop = (ts) => {
-        if (!moved) { tx = innerWidth * (0.5 + 0.28 * Math.sin(ts / 2600)); ty = innerHeight * (0.48 + 0.2 * Math.sin(ts / 1900)); }
+        if (!moved) { if (coarse) { tx = innerWidth * (0.5 + 0.34 * Math.sin(ts / 1300)); ty = innerHeight * (0.6 + 0.14 * Math.sin(ts / 950)); } else { tx = innerWidth * (0.5 + 0.28 * Math.sin(ts / 2600)); ty = innerHeight * (0.48 + 0.2 * Math.sin(ts / 1900)); } }
         x += (tx - x) * 0.16; y += (ty - y) * 0.16;
         hero.style.setProperty("--mx", `${x}px`); hero.style.setProperty("--my", `${y}px`);
         requestAnimationFrame(loop);
@@ -215,6 +216,17 @@
       row.addEventListener("mouseenter", on); row.addEventListener("focus", on);
       row.addEventListener("mouseleave", () => bgs.forEach((b) => b.classList.remove("on")));
     });
+    // on phones there is no hover: the project in the middle of the screen lights up and shows its cover
+    if (matchMedia("(hover: none), (max-width: 760px)").matches) {
+      const rows = [...document.querySelectorAll(".work-row")];
+      const pick = () => {
+        const mid = innerHeight * 0.5; let best = null, d = 1e9;
+        rows.forEach((r) => { const b = r.getBoundingClientRect(), c = Math.abs(b.top + b.height / 2 - mid); if (c < d) { d = c; best = r; } });
+        rows.forEach((r) => r.classList.toggle("active", r === best));
+        bgs.forEach((b, j) => b.classList.toggle("on", !!best && covers[j] === best.dataset.cover));
+      };
+      addEventListener("scroll", pick, { passive: true }); pick();
+    }
   }
 
   /* ---------- PROJECT ---------- */
@@ -244,7 +256,7 @@
     const hero = p.hero || p.cover;
     main.innerHTML = `
       <header class="p-hero${p.heroFit === "contain" ? " contain" : ""}">
-        ${hero ? img(hero, p.title, p.heroFit === "contain" ? "60vw" : "100vw", "p-hero-img", true).replace("<img ", `<img style="object-position:${p.heroPos || "50% 50%"}" `) : ""}
+        ${hero ? img(hero, p.title, p.heroFit === "contain" ? "60vw" : "100vw", "p-hero-img", true).replace("<img ", `<img style="object-position:${p.heroPos || "50% 50%"}" `).replace(p.heroXL ? /srcset="[^"]*"/ : /$^/, `srcset="img/${hero}-s.webp 800w, img/${hero}.webp 1600w, img/${hero}-xl.webp 2560w"`) : ""}
         <div class="p-hero-text"><span class="kind">${esc(p.kind)}</span><h1 class="display dvd">${esc(p.title)}</h1></div>
       </header>
       ${p.intro ? `<section class="block p-intro"><p>${esc(p.intro)}</p></section>` : ""}
@@ -392,7 +404,7 @@
       const W = row.clientWidth; if (!W) return;
       const gap = parseFloat(getComputedStyle(row).columnGap) || 12, kids = [...row.children];
       const ars = kids.map((el) => { const [w, h] = Z[el.dataset.k] || [3, 2]; return w / h; });
-      const h = Math.min(innerHeight - 110, (W - gap * (kids.length - 1)) / ars.reduce((a, b) => a + b, 0));
+      const h = (W - gap * (kids.length - 1)) / ars.reduce((a, b) => a + b, 0);
       kids.forEach((el, i) => { el.style.width = `${ars[i] * h}px`; el.style.height = `${h}px`; });
     });
     const ar = (el) => { const [w, h] = Z[el.dataset.k] || [3, 2]; return w / h; };
@@ -405,7 +417,7 @@
       const g = parseFloat(getComputedStyle(c).rowGap) || 12, narrow = W < 600;
       c.querySelectorAll(".c-row").forEach((row) => {
         const RW = row.classList.contains("narrow") && !narrow ? W * 0.66 : W;
-        const kids = [...row.children], h = Math.min(maxH(), (RW - g * (kids.length - 1)) / kids.reduce((s, el) => s + ar(el), 0));
+        const kids = [...row.children], h = (RW - g * (kids.length - 1)) / kids.reduce((s, el) => s + ar(el), 0);
         kids.forEach((el) => sz(el, ar(el) * h, h));
       });
       // bento block: every column ends at the same height, nothing cropped
@@ -631,7 +643,7 @@
         p.style.setProperty("--r", `${(Math.random() * 16 - 8).toFixed(1)}deg`); p.style.setProperty("--px", `${(Math.random() * 80 + 10) | 0}%`);
         p.style.left = `${8 + Math.random() * 52}%`; p.style.top = `${10 + Math.random() * 30}px`; p.style.zIndex = ++z;
         p.innerHTML = `<div class="print-img"><img src="${src.currentSrc || src.src}" style="${src.getAttribute("style") || ""}" alt=""><span class="fx-overlay"></span></div>`;
-        tray.appendChild(p);
+        tray.appendChild(p); tray.classList.add('has');
         while (tray.children.length > 6) tray.firstElementChild.remove();
         let sx, sy, ox, oy;
         p.addEventListener("pointerdown", (e) => { p.setPointerCapture(e.pointerId); p.style.zIndex = ++z; p.classList.add("held"); sx = e.clientX; sy = e.clientY; ox = p.offsetLeft; oy = p.offsetTop; });
@@ -663,7 +675,7 @@
           { label: "Settings", sub: () => ({ title: "SETTINGS", items: [
             { label: "Flash", value: cfg.flash ? "ON" : "OFF", act: () => { cfg.flash = !cfg.flash; store.set("flash", cfg.flash); } },
             { label: "Self-timer", value: cfg.timer ? `${cfg.timer}s` : "OFF", act: () => { cfg.timer = cfg.timer === 0 ? 3 : cfg.timer === 3 ? 10 : 0; store.set("timer", cfg.timer); } },
-            { label: "Clear prints", act: () => { tray.innerHTML = ""; closeMenu(); say("CLEARED"); } },
+            { label: "Clear prints", act: () => { tray.innerHTML = ""; tray.classList.remove("has"); closeMenu(); say("CLEARED"); } },
           ] }) },
           { label: "Info", sub: () => ({ title: "INFO", items: [
             { label: "ENRI DC-2000", value: "v1.0" }, { label: "Backstage", value: `${pics.length} photos` },
