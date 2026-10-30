@@ -595,7 +595,7 @@ body.is-home { overflow: hidden; height: 100vh; height: 100svh; }
 
 /* ---------- the CRT stack (video section) ---------- */
 .tv-wrap { display: grid; grid-template-columns: auto minmax(220px, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
-.crt-stage { position: relative; aspect-ratio: 780 / 2220; width: clamp(200px, calc((100svh - var(--header) - 40px) * 780 / 2220), 420px); max-width: 100%; margin-inline: auto; container-type: inline-size; }
+.crt-stage { position: relative; aspect-ratio: 780 / 2220; width: clamp(260px, 34vw, 560px); max-width: 100%; margin-inline: auto; container-type: inline-size; }
 .crt-stage::before { /* contact shadow on the floor */
   content: ""; position: absolute; left: -6%; right: -6%; bottom: -1.6%; height: 4%;
   background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.07), transparent 70%);
@@ -962,4 +962,10 @@ body.page-flash::before {
   .lightbox figure { inset: 58px 0 70px; }
   .lightbox figure img { max-height: calc(100dvh - 128px); }
   .lightbox .arrows { top: auto; bottom: 10px; transform: none; padding: 0 var(--gutter); }
+}
+
+/* video: big TV stack you scroll through; the channel list stays in view next to it */
+@media (min-width: 901px) {
+  .tv-wrap { align-items: start; }
+  .tv-info { position: sticky; top: calc(var(--header) + 30vh); }
 }
