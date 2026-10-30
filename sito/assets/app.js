@@ -387,17 +387,20 @@
       const W = row.clientWidth; if (!W) return;
       const gap = parseFloat(getComputedStyle(row).columnGap) || 12, kids = [...row.children];
       const ars = kids.map((el) => { const [w, h] = Z[el.dataset.k] || [3, 2]; return w / h; });
-      const h = (W - gap * (kids.length - 1)) / ars.reduce((a, b) => a + b, 0);
+      const h = Math.min(innerHeight - 110, (W - gap * (kids.length - 1)) / ars.reduce((a, b) => a + b, 0));
       kids.forEach((el, i) => { el.style.width = `${ars[i] * h}px`; el.style.height = `${h}px`; });
     });
     const ar = (el) => { const [w, h] = Z[el.dataset.k] || [3, 2]; return w / h; };
+    // no photo may be taller than the screen (minus the header): you always see it whole
+    const hdr = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header")) || 70;
+    const maxH = () => Math.max(200, innerHeight - hdr() - 40);
     const sz = (el, w, h) => { el.style.width = `${w}px`; el.style.height = `${h}px`; };
     const layoutCollage = () => document.querySelectorAll(".photo-section:not([hidden]) .collage").forEach((c) => {
       const W = c.clientWidth; if (!W) return;
       const g = parseFloat(getComputedStyle(c).rowGap) || 12, narrow = W < 600;
       c.querySelectorAll(".c-row").forEach((row) => {
         const RW = row.classList.contains("narrow") && !narrow ? W * 0.66 : W;
-        const kids = [...row.children], h = (RW - g * (kids.length - 1)) / kids.reduce((s, el) => s + ar(el), 0);
+        const kids = [...row.children], h = Math.min(maxH(), (RW - g * (kids.length - 1)) / kids.reduce((s, el) => s + ar(el), 0));
         kids.forEach((el) => sz(el, ar(el) * h, h));
       });
       // bento block: every column ends at the same height, nothing cropped

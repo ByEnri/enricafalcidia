@@ -557,7 +557,7 @@ body.is-home { overflow: hidden; height: 100vh; height: 100svh; }
 /* ---------- collage (around the world): sized by script, nothing cropped ---------- */
 .collage { display: grid; gap: 14px; }
 .collage > .c-row:nth-child(even) + .c-row { margin-top: 0; }
-.c-row, .c-mosaic { display: flex; gap: 14px; }
+.c-row, .c-mosaic { display: flex; gap: 14px; justify-content: center; }
 .c-row.narrow { justify-content: center; }
 .country-tabs { display: flex; gap: clamp(18px, 3vw, 40px); margin: 0 0 26px; position: sticky; top: calc(var(--header) + 4px); z-index: 20; padding: 8px 0; background: var(--black); box-shadow: 0 -90px 0 var(--black), 0 14px 18px -6px var(--black); }
 .country-tabs button { font-size: clamp(17px, 1.6vw, 22px); color: var(--grey); display: flex; gap: 6px; align-items: baseline; padding-bottom: 4px; border-bottom: 1px solid transparent; transition: color .2s; }
@@ -588,7 +588,7 @@ body.is-home { overflow: hidden; height: 100vh; height: 100svh; }
 
 /* ---------- the CRT stack (video section) ---------- */
 .tv-wrap { display: grid; grid-template-columns: auto minmax(220px, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
-.crt-stage { position: relative; aspect-ratio: 780 / 2220; width: clamp(260px, calc(92vh * 780 / 2220), 420px); max-width: 100%; margin-inline: auto; container-type: inline-size; }
+.crt-stage { position: relative; aspect-ratio: 780 / 2220; width: clamp(200px, calc((100svh - var(--header) - 40px) * 780 / 2220), 420px); max-width: 100%; margin-inline: auto; container-type: inline-size; }
 .crt-stage::before { /* contact shadow on the floor */
   content: ""; position: absolute; left: -6%; right: -6%; bottom: -1.6%; height: 4%;
   background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.07), transparent 70%);
