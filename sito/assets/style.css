@@ -951,3 +951,15 @@ body.page-flash::before {
   opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
 .mail-note.on { opacity: 1; transform: translate(-50%, 0); }
 .mail-note b { font-weight: 700; margin-left: 6px; }
+
+/* viewer: photo as big as possible, centred in the screen; arrows sit on the sides */
+.lightbox figure { position: absolute; inset: 58px 76px; padding: 0; display: grid; place-items: center; overflow: visible; }
+.lightbox figure img { max-width: 100%; max-height: calc(100vh - 116px); max-height: calc(100dvh - 116px); }
+.lightbox .bar { position: relative; z-index: 2; }
+.lightbox .arrows { position: absolute; z-index: 2; left: 0; right: 0; top: 50%; transform: translateY(-50%); padding: 0 14px; pointer-events: none; }
+.lightbox .arrows button { pointer-events: auto; }
+@media (max-width: 760px) {
+  .lightbox figure { inset: 58px 0 70px; }
+  .lightbox figure img { max-height: calc(100dvh - 128px); }
+  .lightbox .arrows { top: auto; bottom: 10px; transform: none; padding: 0 var(--gutter); }
+}
