@@ -15,7 +15,7 @@ window.SITE = {
   trail: true,
 
   name: "Enrica Falcidia",
-  tagline: "Creative direction, branding and photography. Italian, based in Madrid.",
+  tagline: "Creative direction, branding and photography.",
   email: "enricafalcidia4@gmail.com",
   contacts: [
     { label: "Email", href: "mailto:enricafalcidia4@gmail.com" },
